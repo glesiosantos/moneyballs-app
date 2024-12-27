@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hHh lpR lFf">
-    <q-header elevated>
+    <q-header>
       <q-toolbar>
         <q-btn
           flat
@@ -22,7 +22,7 @@
     <q-drawer
       v-model="leftDrawerOpen"
       class="bg-primary text-white"
-      :with="250"
+      :width="180"
       :breakpoint="767"
       show-if-above
       bordered

@@ -2,10 +2,10 @@
   <q-item
     clickable
     tag="a"
-    target="_blank"
-    :href="props.link"
+    :to="props.link"
   >
     <q-item-section
+      class="text-white"
       v-if="props.icon"
       avatar
     >
@@ -13,8 +13,7 @@
     </q-item-section>
 
     <q-item-section>
-      <q-item-label>{{ props.title }}</q-item-label>
-      <q-item-label caption>{{ props.caption }}</q-item-label>
+      <q-item-label class="text-white">{{ props.title }}</q-item-label>
     </q-item-section>
   </q-item>
 </template>

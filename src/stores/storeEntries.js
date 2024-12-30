@@ -20,5 +20,20 @@ export const useStoreEntries = defineStore('entries', () => {
     entries.value.push(entry)
   }
 
-  return {entries, addEntry, balance}
+  const removeEntry = (entry) => {
+    const index = entries.value.findIndex(e => e.id === entry.id)
+    entries.value.splice(index, 1)
+  }
+
+  return {entries, addEntry, removeEntry, balance}
 })
+
+
+// const balance = computed(() => {
+//   let total = 0
+//   entries.value.forEach(e => {
+//     total += e.amount
+//   })
+
+//   return total
+// })

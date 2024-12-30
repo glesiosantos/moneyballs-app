@@ -74,9 +74,8 @@ import { useStoreEntries } from 'src/stores/storeEntries'
     addEntryForm.amount = null
   }
 
-  function deleteEntry (id) {
-    const index = store.entries.value.findIndex(entry => entry.id === id)
-    store.entries.value.splice(index, 1)
+  function deleteEntry (entry) {
+    store.removeEntry(entry)
     $q.notify({
       message: 'Entry deleted on success!',
       position: 'top'
@@ -104,20 +103,10 @@ import { useStoreEntries } from 'src/stores/storeEntries'
           noCaps: true
         }
       }).onOk(() => {
-        deleteEntry(entry.id)
+        deleteEntry(entry)
       }).onCancel(() => {
         reset()
       })
   }
 
 </script>
-
-
-<!-- const balance = computed(() => {
-  let total = 0
-  entries.value.forEach(e => {
-    total += e.amount
-  })
-
-  return total
-}) -->

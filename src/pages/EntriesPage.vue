@@ -1,12 +1,12 @@
 <template>
   <q-page>
     <div class="q-pa-md">
-      <q-list bordered separator>
+      <q-list bordered separator v-if="store.entries.length > 0">
         <q-slide-item
             @right="onEntrySlideRight($event, entry)"
             left-color="positive"
             right-color="negative"
-            v-for="entry in entries" :key="entry.id"
+            v-for="entry in store.entries" :key="entry.id"
           >
           <template v-slot:right>
             <q-icon name="delete" />
@@ -27,14 +27,15 @@
           </q-item>
         </q-slide-item>
       </q-list>
+      <p v-else> Nenhuma entrada registrada</p>
     </div>
     <q-footer class="bg-transparent">
       <div class="row q-px-md q-py-md shadow-up-2">
         <div class="col text-grey-7 text-h6">Balanço</div>
         <div class="col text-h6 text-right"
-        :class="useAmountColor(balance)">{{ useCurrency(balance) }}</div>
+        :class="useAmountColor(store.balance)">{{ useCurrency(store.balance) }}</div>
       </div>
-      <q-form @submit.prevent="handleSubmit" class="row q-pa-sm q-col-gutter-sm bg-primary">
+      <q-form @submit.prevent="addEntryFormSubmit" class="row q-pa-sm q-col-gutter-sm bg-primary">
         <div class="col">
           <q-input v-model="addEntryForm.name" label="Decrição do montante" outlined dense bg-color="white"/>
         </div>
@@ -50,66 +51,31 @@
 </template>
 
 <script setup>
-import { ref, computed, reactive } from 'vue'
+import { reactive } from 'vue'
 import useCurrency from '../hooks/use_currency'
 import useAmountColor from '../hooks/use_amount_color'
 import { useQuasar } from 'quasar'
+import { useStoreEntries } from 'src/stores/storeEntries'
 
-const $q = useQuasar()
+  const $q = useQuasar()
+  const store = useStoreEntries()
 
-const entries = ref([
-  {
-    id: 1,
-    name: 'Salario',
-    amount: 3500
-  },
-  {
-    id: 2,
-    name: 'Escola da Yasmin',
-    amount: -650
-  },
-  {
-    id: 3,
-    name: 'Natação da Yasmin',
-    amount: -85
-  },
-  {
-    id: 4,
-    name: 'Conserto do carro',
-    amount: -3000
-  },
-  {
-    id: 5,
-    name: 'Venda de Site',
-    amount: 5000
-  }
-])
-
-const addEntryForm = reactive({
-  name: '',
-  amount: null
-})
-
-  const balance = computed(() => {
-    return entries.value.reduce((accumulator, {amount}) => {
-      return accumulator + amount
-    }, 0)
+  const addEntryForm = reactive({
+    name: '',
+    amount: null
   })
 
-  function handleSubmit () {
-    const entry = {
-      id: entries.value.length + 1,
+  const addEntryFormSubmit = () => {
+    store.addEntry({
       name: addEntryForm.name,
       amount: Number.parseFloat(addEntryForm.amount)
-    }
-    entries.value.push(entry)
+    })
     addEntryForm.name = ''
     addEntryForm.amount = null
   }
 
-  function deleteEntry (id) {
-    const index = entries.value.findIndex(entry => entry.id === id)
-    entries.value.splice(index, 1)
+  function deleteEntry (entry) {
+    store.removeEntry(entry)
     $q.notify({
       message: 'Entry deleted on success!',
       position: 'top'
@@ -137,20 +103,10 @@ const addEntryForm = reactive({
           noCaps: true
         }
       }).onOk(() => {
-        deleteEntry(entry.id)
+        deleteEntry(entry)
       }).onCancel(() => {
         reset()
       })
   }
 
 </script>
-
-
-<!-- const balance = computed(() => {
-  let total = 0
-  entries.value.forEach(e => {
-    total += e.amount
-  })
-
-  return total
-}) -->
